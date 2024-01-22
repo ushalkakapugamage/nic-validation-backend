@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url : jdbc:mysql://localhost:3306/mobios
+    username : root
+    password : 2367
+
+  jpa:
+    hibernate:
+      ddl-auto: create
