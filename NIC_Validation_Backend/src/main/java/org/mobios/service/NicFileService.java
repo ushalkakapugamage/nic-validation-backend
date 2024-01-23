@@ -1,24 +1,23 @@
 package org.mobios.service;
 
 
-import com.opencsv.exceptions.CsvValidationException;
+import com.opencsv.exceptions.CsvException;
+import org.mobios.dao.NicEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface NicFileService {
-    void addNICFile(MultipartFile files);
-    List<String[]> getAllNICFiles();
+    void addNICFile(MultipartFile[] files) throws CsvException, IOException;
+    List<NicEntity> getAllNICFiles();
 
-    List<String[]> parseCSV(MultipartFile file) throws IOException, CsvValidationException;
+    List<String[]> parseCSV(MultipartFile file) throws IOException, CsvException;
 
-    void processNICFiles(List<String[]> files);
+    List<NicEntity> processNICFiles(List<String[]> files);
 
-    void validateNIC(String nic);
-
-
+    NicEntity validateNIC(String nic);
 
 
+    List<NicEntity> getNicFileById(int id);
 }
