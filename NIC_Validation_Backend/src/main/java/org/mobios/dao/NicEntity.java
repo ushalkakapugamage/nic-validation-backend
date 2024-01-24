@@ -22,4 +22,5 @@ public class NicEntity {
     private LocalDate birthdate;
     private int age;
     private String gender;
+    private String fileName;
 }

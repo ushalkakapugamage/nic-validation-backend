@@ -1,10 +1,17 @@
 package org.mobios.advice;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.mobios.dto.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
 public class HandleException {
+
+
+    @ExceptionHandler
+    public Response handleExceptions(IllegalArgumentException ex){
+        Response response = new Response();
+        response.setResponse("status",ex.getMessage());
+        return response;
+    }
 }

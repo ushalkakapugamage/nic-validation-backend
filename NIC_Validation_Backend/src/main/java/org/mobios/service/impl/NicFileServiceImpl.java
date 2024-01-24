@@ -19,6 +19,7 @@ import java.util.List;
 
 @Service
 public class NicFileServiceImpl implements NicFileService{
+    private String fileName;
 
     @Autowired
     NicFileRepository nicFileRepository;
@@ -26,7 +27,9 @@ public class NicFileServiceImpl implements NicFileService{
     @Override
     public void addNICFile(MultipartFile[] files) throws IOException, CsvException {
         for (MultipartFile file : files){
+            fileName = file.getOriginalFilename();
             nicFileRepository.saveAll( processNICFiles(parseCSV(file)));
+
         }
 
 
@@ -41,6 +44,16 @@ public class NicFileServiceImpl implements NicFileService{
     @Override
     public List<NicEntity> getNicFileById(int id) {
         return nicFileRepository.findById(id);
+    }
+
+    @Override
+    public List<NicEntity> getNicFileByFileName(String FileName) {
+        return nicFileRepository.findByFileName(FileName);
+    }
+
+    @Override
+    public List<String> getFileNames() {
+        return nicFileRepository.findDistinctFileName();
     }
 
     @Override
@@ -60,13 +73,13 @@ public class NicFileServiceImpl implements NicFileService{
     }
 
     @Override
-    public List<NicEntity> processNICFiles(List<String[]> files) {
+    public List<NicEntity> processNICFiles(List<String[]> records) {
         List <NicEntity> data = new ArrayList<>();
-        for (String [] file : files){
-            if (file[0].length() != 12){
-                throw new IllegalArgumentException("Please check the NIC ="+file[0]);
+        for (String [] record : records){
+            if (record[0].length() != 12){
+                throw new IllegalArgumentException("Please check the NIC ="+record[0]);
             }
-            data.add(validateNIC(file[0]));
+            data.add(validateNIC(record[0]));
         }
         return data;
     }
@@ -95,6 +108,7 @@ public class NicFileServiceImpl implements NicFileService{
         entity.setAge(age);
         entity.setGender(gender);
         entity.setBirthdate(birthdate);
+        entity.setFileName(fileName);
 
         return entity;
 

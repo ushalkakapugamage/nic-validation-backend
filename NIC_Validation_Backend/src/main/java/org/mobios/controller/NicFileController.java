@@ -45,6 +45,22 @@ public class NicFileController {
 
     }
 
+    @GetMapping("/getNicFileByFileName")
+    public ResponseEntity<Response> getNicFileByFileName(@RequestParam("name")String fileName){
+        Response response = new Response();
+        response.setResponse("data",nicFileService.getNicFileByFileName(fileName));
+        return  new ResponseEntity<Response>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/getFileNames")
+    public ResponseEntity<Response> getFileNames(){
+        Response response = new Response();
+        response.setResponse("data",nicFileService.getFileNames());
+        return  new ResponseEntity<Response>(response, HttpStatus.OK);
+
+    }
+
 
 
 

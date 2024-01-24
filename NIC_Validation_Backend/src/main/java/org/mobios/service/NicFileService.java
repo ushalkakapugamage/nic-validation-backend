@@ -20,4 +20,8 @@ public interface NicFileService {
 
 
     List<NicEntity> getNicFileById(int id);
+
+    List<NicEntity> getNicFileByFileName(String FileName);
+
+    List<String> getFileNames();
 }
