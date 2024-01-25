@@ -2,6 +2,8 @@ package org.mobios.service.impl;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.mobios.dao.NicEntity;
 import org.mobios.repository.NicFileRepository;
 import org.mobios.service.NicFileService;
@@ -9,13 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class NicFileServiceImpl implements NicFileService{
@@ -57,6 +61,23 @@ public class NicFileServiceImpl implements NicFileService{
     }
 
     @Override
+    public byte[] generateReports(String title) throws JRException, FileNotFoundException {
+        List<NicEntity> data = nicFileRepository.findByFileName(fileName);
+        JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(data);
+        JasperReport compileReport = JasperCompileManager.compileReport(new FileInputStream("src/main/resources/nicFile.jrxml"));
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("title",title.toUpperCase());
+        JasperPrint report = JasperFillManager.fillReport(compileReport, map, beanCollectionDataSource);
+        byte[] pdf = JasperExportManager.exportReportToPdf(report);
+        return pdf;
+
+    }
+
+
+
+
+
+    @Override
     public List<String[]> parseCSV(MultipartFile file) throws IOException, CsvException {
         if (file == null || (!file.getOriginalFilename().toLowerCase().endsWith(".csv") && (!file.getOriginalFilename().toLowerCase().endsWith(".txt")))){
             throw new IllegalArgumentException("Invalid file type. Please provide a CSV or text file.");
@@ -74,10 +95,15 @@ public class NicFileServiceImpl implements NicFileService{
 
     @Override
     public List<NicEntity> processNICFiles(List<String[]> records) {
+        String regex = "^[0-9]{12}$";
+        Pattern pattern = Pattern.compile(regex);
+
+
         List <NicEntity> data = new ArrayList<>();
         for (String [] record : records){
-            if (record[0].length() != 12){
-                throw new IllegalArgumentException("Please check the NIC ="+record[0]);
+            Matcher matcher = pattern.matcher(record[0]);
+            if (!matcher.matches()){
+                throw new IllegalArgumentException("Invalid NIC Format"+record[0]);
             }
             data.add(validateNIC(record[0]));
         }
@@ -100,6 +126,7 @@ public class NicFileServiceImpl implements NicFileService{
 
         birthdate = calculateBirthday(Integer.parseInt(nic.substring(0,4)),temp);
 
+
         LocalDate currentDate = LocalDate.now();
         age = Period.between(birthdate,currentDate).getYears();
 
@@ -107,7 +134,7 @@ public class NicFileServiceImpl implements NicFileService{
         entity.setNIC(nic);
         entity.setAge(age);
         entity.setGender(gender);
-        entity.setBirthdate(birthdate);
+        entity.setBirthdate(Date.valueOf(birthdate));
         entity.setFileName(fileName);
 
         return entity;

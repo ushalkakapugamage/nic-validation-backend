@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Nic-File" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5bee0ee5-2427-4d5a-b5dd-516b9fa6aa8c">
+    <parameter name="title" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <field name="id" class="java.lang.Integer"/>
+    <field name="NIC" class="java.lang.String"/>
+    <field name="birthdate" class="java.sql.Date"/>
+    <field name="age" class="java.lang.Integer"/>
+    <field name="gender" class="java.lang.String"/>
+    <field name="fileName" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="100" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="80" backcolor="#737373" uuid="4fb0267c-e4da-4085-9261-672c567544b6"/>
+                <graphicElement>
+                    <pen lineWidth="0.0"/>
+                </graphicElement>
+            </rectangle>
+            <textField>
+                <reportElement x="180" y="0" width="180" height="80" uuid="cafc8fb3-3abb-44b3-9927-49cfe0d25efd"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="32"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{title}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    <columnHeader>
+        <band height="31" splitType="Stretch">
+            <staticText>
+                <reportElement x="51" y="0" width="80" height="30" uuid="5e198c2d-12db-491d-90aa-d7a69bc83f89">
+                    <property name="com.jaspersoft.studio.unit.tabStopWidth" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="131" y="0" width="100" height="30" uuid="3b55bc2b-88cb-469b-ac8f-bc01759e48de">
+                    <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NIC]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="232" y="0" width="100" height="30" uuid="000180ca-6a54-4e81-bce3-ef4aefe69d09">
+                    <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[BirthDate]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="332" y="0" width="79" height="30" uuid="d843bf54-4e2b-4ec1-af74-3bfea0d4b752">
+                    <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Age]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="411" y="0" width="95" height="30" uuid="9e7d3860-10ce-486e-8b96-c5f9da35dc76">
+                    <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Gender]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="32" splitType="Stretch">
+            <textField>
+                <reportElement x="51" y="-1" width="81" height="31" uuid="0dcb5efb-b1c5-49d8-b21b-22bf355a2065"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="131" y="0" width="101" height="31" uuid="b3d9239a-a459-4f3c-a840-2d4c3549e13c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{NIC}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="231" y="0" width="101" height="31" uuid="6eaa4ccd-d352-46b6-965c-d783bb1aab5c"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{birthdate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="331" y="0" width="80" height="31" uuid="c4559f34-243f-434d-80ba-1bef0f29016a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{age}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="411" y="0" width="95" height="31" uuid="5194f23f-9cdd-432a-8cfc-afc347ac580b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{gender}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="45" splitType="Stretch"/>
+    </columnFooter>
+    <summary>
+        <band height="42" splitType="Stretch"/>
+    </summary>
+</jasperReport>

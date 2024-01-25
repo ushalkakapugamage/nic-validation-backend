@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 @Data
@@ -19,7 +20,7 @@ public class NicEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String NIC;
-    private LocalDate birthdate;
+    private Date birthdate;
     private int age;
     private String gender;
     private String fileName;
