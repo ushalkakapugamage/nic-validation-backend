@@ -27,7 +27,9 @@ public class NicFileController {
     @PostMapping("/addNicFile")
     public Response addNicFile(@RequestParam("file")MultipartFile[] files) throws IOException, CsvException {
         Response response = new Response();
-        nicFileService.addNICFile(files);
+        for (MultipartFile file : files) {
+            nicFileService.addNICFile(file);
+        }
         response.setResponse("status","File Saved Successfully");
         return  response;
     }

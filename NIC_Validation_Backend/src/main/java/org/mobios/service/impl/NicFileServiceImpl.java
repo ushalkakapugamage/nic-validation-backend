@@ -8,6 +8,7 @@ import org.mobios.dao.NicEntity;
 import org.mobios.repository.NicFileRepository;
 import org.mobios.service.NicFileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,19 +23,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class NicFileServiceImpl implements NicFileService{
-    private String fileName;
+public class NicFileServiceImpl implements NicFileService {
+
 
     @Autowired
     NicFileRepository nicFileRepository;
 
+    @Async
     @Override
-    public void addNICFile(MultipartFile[] files) throws IOException, CsvException {
-        for (MultipartFile file : files){
-            fileName = file.getOriginalFilename();
-            nicFileRepository.saveAll( processNICFiles(parseCSV(file)));
-
-        }
+    public void addNICFile(MultipartFile file) throws IOException, CsvException {
+        String fileName = file.getOriginalFilename();
+        nicFileRepository.saveAll( processNICFiles(parseCSV(file),fileName));
+        System.out.println(Thread.currentThread().getName());
 
 
     }
@@ -62,11 +62,11 @@ public class NicFileServiceImpl implements NicFileService{
 
     @Override
     public byte[] generateReports(String title) throws JRException, FileNotFoundException {
-        List<NicEntity> data = nicFileRepository.findByFileName(fileName);
+        List<NicEntity> data = nicFileRepository.findByFileName(title);
         JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(data);
         JasperReport compileReport = JasperCompileManager.compileReport(new FileInputStream("src/main/resources/nicFile.jrxml"));
-        HashMap<String,Object> map = new HashMap<>();
-        map.put("title",title.toUpperCase());
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("title", title.toUpperCase());
         JasperPrint report = JasperFillManager.fillReport(compileReport, map, beanCollectionDataSource);
         byte[] pdf = JasperExportManager.exportReportToPdf(report);
         return pdf;
@@ -74,12 +74,9 @@ public class NicFileServiceImpl implements NicFileService{
     }
 
 
-
-
-
     @Override
     public List<String[]> parseCSV(MultipartFile file) throws IOException, CsvException {
-        if (file == null || (!file.getOriginalFilename().toLowerCase().endsWith(".csv") && (!file.getOriginalFilename().toLowerCase().endsWith(".txt")))){
+        if (file == null || (!file.getOriginalFilename().toLowerCase().endsWith(".csv") && (!file.getOriginalFilename().toLowerCase().endsWith(".txt")))) {
             throw new IllegalArgumentException("Invalid file type. Please provide a CSV or text file.");
         }
 
@@ -87,48 +84,48 @@ public class NicFileServiceImpl implements NicFileService{
         CSVReader csvReader = new CSVReader(reader);
         List<String[]> records = new ArrayList<>();
         String[] record;
-        while ((record = csvReader.readNext()) != null){
+        while ((record = csvReader.readNext()) != null) {
             records.add(record);
         }
         return records;
     }
 
     @Override
-    public List<NicEntity> processNICFiles(List<String[]> records) {
+    public List<NicEntity> processNICFiles(List<String[]> records,String fileName) {
         String regex = "^[0-9]{12}$";
         Pattern pattern = Pattern.compile(regex);
 
 
-        List <NicEntity> data = new ArrayList<>();
-        for (String [] record : records){
+        List<NicEntity> data = new ArrayList<>();
+        for (String[] record : records) {
             Matcher matcher = pattern.matcher(record[0]);
-            if (!matcher.matches()){
-                throw new IllegalArgumentException("Invalid NIC Format"+record[0]);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("Invalid NIC Format" + record[0]);
             }
-            data.add(validateNIC(record[0]));
+            data.add(validateNIC(record[0],fileName));
         }
         return data;
     }
 
     @Override
-    public NicEntity validateNIC(String nic) {
+    public NicEntity validateNIC(String nic,String fileName) {
         LocalDate birthdate = null;
         int age;
         String gender;
 
-        int temp = Integer.parseInt(nic.substring(4,7));
-        if (temp > 500){
+        int temp = Integer.parseInt(nic.substring(4, 7));
+        if (temp > 500) {
             gender = "Female";
-            temp-=500;
-        }else{
-            gender="Male";
+            temp -= 500;
+        } else {
+            gender = "Male";
         }
 
-        birthdate = calculateBirthday(Integer.parseInt(nic.substring(0,4)),temp);
+        birthdate = calculateBirthday(Integer.parseInt(nic.substring(0, 4)), temp);
 
 
         LocalDate currentDate = LocalDate.now();
-        age = Period.between(birthdate,currentDate).getYears();
+        age = Period.between(birthdate, currentDate).getYears();
 
         NicEntity entity = new NicEntity();
         entity.setNIC(nic);
@@ -143,34 +140,33 @@ public class NicFileServiceImpl implements NicFileService{
     }
 
 
-
-    public LocalDate calculateBirthday(int year,int numberOfDays){
-        numberOfDays-=1;
+    public LocalDate calculateBirthday(int year, int numberOfDays) {
+        numberOfDays -= 1;
         int month = 0;
-        int[] days = new int[]{31,28,31,30,31,30,31,31,30,31,30,31};
-        for (int day : days){
-            if (isLeapYear(year) && day == 28){
+        int[] days = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        for (int day : days) {
+            if (isLeapYear(year) && day == 28) {
                 day++;
             }
             month++;
-            if (numberOfDays > day){
+            if (numberOfDays > day) {
                 numberOfDays -= day;
-            }else{
+            } else {
                 break;
             }
 
         }
-        return LocalDate.of(year,month,numberOfDays);
+        return LocalDate.of(year, month, numberOfDays);
     }
 
     private boolean isLeapYear(int year) {
-        if (year % 4 == 0){
-            if (year % 100 == 0){
+        if (year % 4 == 0) {
+            if (year % 100 == 0) {
                 return (year % 400) == 0;
-            }else {
+            } else {
                 return true;
             }
-        }else {
+        } else {
             return false;
         }
 

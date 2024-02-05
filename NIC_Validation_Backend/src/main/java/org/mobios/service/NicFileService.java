@@ -11,14 +11,14 @@ import java.io.IOException;
 import java.util.List;
 
 public interface NicFileService {
-    void addNICFile(MultipartFile[] files) throws CsvException, IOException;
+    void addNICFile(MultipartFile file) throws CsvException, IOException;
     List<NicEntity> getAllNICFiles();
 
     List<String[]> parseCSV(MultipartFile file) throws IOException, CsvException;
 
-    List<NicEntity> processNICFiles(List<String[]> files);
+    List<NicEntity> processNICFiles(List<String[]> files,String fileName);
 
-    NicEntity validateNIC(String nic);
+    NicEntity validateNIC(String nic,String fileName);
 
 
     List<NicEntity> getNicFileById(int id);
